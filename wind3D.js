@@ -1,5 +1,5 @@
 class Wind3D {
-    constructor(panel, mode) {
+    constructor(panel) {
         var options = {
             // use Sentinel-2 instead of the default Bing Maps because Bing Maps sessions is limited
             imageryProvider: new Cesium.IonImageryProvider({ assetId: 3954 }),
@@ -10,10 +10,6 @@ class Wind3D {
             // useBrowserRecommendedResolution can be set to false to improve the render quality
             // useBrowserRecommendedResolution: false,
             scene3DOnly: true
-        }
-
-        if (mode.debug) {
-            options.useDefaultRenderLoop = false;
         }
 
         this.viewer = new Cesium.Viewer('cesiumContainer', options);
@@ -38,10 +34,6 @@ class Wind3D {
                 this.addPrimitives();
 
                 this.setupEventListeners();
-
-                if (mode.debug) {
-                    this.debug();
-                }
             });
 
         this.imageryLayers = this.viewer.imageryLayers;

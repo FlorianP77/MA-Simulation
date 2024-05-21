@@ -1,9 +1,7 @@
-var demo = Cesium.defaultValue(demo, false);
-
 const fileOptions = {
-    dataDirectory: demo ? 'dataSets/' : '../data/',
+    dataDirectory: 'dataSets/',
     dataFile: "demo.nc",
-    glslDirectory: demo ? 'glsl/' : 'glsl/'
+    glslDirectory: 'glsl/'
 }
 
 const defaultParticleSystemOptions = {
@@ -25,7 +23,7 @@ const globeLayers = [
 
 const defaultLayerOptions = {
     "globeLayer": globeLayers[0],
-    "WMS_URL": "https://www.ncei.noaa.gov/thredds/wms/model-gfs-g4-anl-files-old/201809/20180916/gfsanl_4_20180916_0000_000.grb2",
+    "WMS_URL": "https://www.ncei.noaa.gov/thredds/wms/model-gfs-g4-anl-files/202402/20240205/gfs_4_20240205_1800_003.grb2",
 }
 
 class Panel {
