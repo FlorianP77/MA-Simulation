@@ -1,0 +1,1 @@
+Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzNzM4ZDQ5OS01YTJhLTRiOWYtYWZkNy0yNzk4OTZmN2M1ODUiLCJpZCI6NDY4OCwiaWF0IjoxNjA4MDEwMDE2fQ.OzrbigaF6oOBqjeaIq_owqbb9we71vn3zH3ZMqtBLuI';

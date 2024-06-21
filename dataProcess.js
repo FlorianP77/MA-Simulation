@@ -78,9 +78,36 @@ var DataProcess = (function () {
         return array;
     }
 
+    
+    var findNearestIndex = function (array, value) {
+        return array.reduce((nearestIndex, currentValue, currentIndex) => {
+            return Math.abs(currentValue - value) < Math.abs(array[nearestIndex] - value) ? currentIndex : nearestIndex;
+        }, 0);
+    }
+
+    var getWindSpeed = function (lon, lat, lev) {
+        var lonIndex = findNearestIndex(data.lon.array, lon);
+        var latIndex = findNearestIndex(data.lat.array, lat);
+        var levIndex = findNearestIndex(data.lev.array, lev);
+
+        var uIndex = levIndex * data.dimensions.lat * data.dimensions.lon + latIndex * data.dimensions.lon + lonIndex;
+        var vIndex = uIndex;
+
+        var u = data.U.array[uIndex];
+        var v = data.V.array[vIndex];
+
+        var windSpeed = Math.sqrt(u * u + v * v);
+        return {
+            u: u,
+            v: v,
+            speed: windSpeed
+        };
+    }
+
     return {
         loadData: loadData,
-        randomizeParticles: randomizeParticles
+        randomizeParticles: randomizeParticles,
+        getWindSpeed: getWindSpeed
     };
 
 })();
