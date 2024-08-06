@@ -6,7 +6,7 @@ const shipRoute = JSON.parse(
 );
 
 
-const timeStepInSeconds = 30;
+const timeStepInSeconds = 300;
 const totalSeconds = timeStepInSeconds * (shipRoute.length - 1);
 const start = Cesium.JulianDate.fromIso8601("2020-03-09T23:10:00Z");
 const stop = Cesium.JulianDate.addSeconds(start, totalSeconds, new Cesium.JulianDate());
@@ -31,33 +31,33 @@ for (let i = 0; i < shipRoute.length; i++) {
 
   viewer.entities.add({
     description: `Location: (${dataPoint.longitude}, ${dataPoint.latitude}, ${dataPoint.height})`,
-    position: position,
+    position: position
   });
 }
 
+async function loadModel() {
+  const shipEntity = viewer.entities.add({
+    availability: new Cesium.TimeIntervalCollection([ new Cesium.TimeInterval({ start: start, stop: stop }) ]),
+    position: positionProperty,
+    model: {
+      uri: 'objects/ship.gltf',
+      minimumPixelSize: 128,
+      maximumScale: 20000,
+      scale: 1000,
+      zIndex: 1
+    },
+    orientation: new Cesium.VelocityOrientationProperty(positionProperty),    
+    path: {
+      material: new Cesium.PolylineGlowMaterialProperty({
+        glowPower: 0.3,
+        color: Cesium.Color.RED
+      }),
+      width: 3,
+      zIndex: 1
+    }
+  });
+  
+  //viewer.trackedEntity = airplaneEntity;
+}
 
-const shipEntity = viewer.entities.add({
-  availability: new Cesium.TimeIntervalCollection([ new Cesium.TimeInterval({ start: start, stop: stop }) ]),
-  position: positionProperty,
-  point: {
-    pixelSize: 30,
-    color: Cesium.Color.GREEN,
-    outlineColor: Cesium.Color.WHITE,
-    outlineWidth: 2,
-    zIndex: 1,
-  },
-  path: {
-    resolution: 1,
-    material: new Cesium.PolylineGlowMaterialProperty({
-      glowPower: 0.3,
-      color: Cesium.Color.RED,
-    }),
-    width: 3,
-    zIndex: 1,
-  },
-});
-
-
-
-// Make the camera track this moving entity.
-//viewer.trackedEntity = shipEntity;
+loadModel();

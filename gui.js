@@ -1,6 +1,6 @@
 const fileOptions = {
     dataDirectory: 'dataSets/',
-    dataFile: "demo.nc",
+    dataFile: 'data.json',
     glslDirectory: 'glsl/'
 }
 

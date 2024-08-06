@@ -27,14 +27,15 @@ class Wind3D {
         this.globeBoundingSphere = new Cesium.BoundingSphere(Cesium.Cartesian3.ZERO, 0.99 * 6378137.0);
         this.updateViewerParameters();
 
-        DataProcess.loadData().then(
+
+        DataProcess.loadData(fileOptions.dataDirectory + fileOptions.dataFile).then(
             (data) => {
-                this.particleSystem = new ParticleSystem(this.scene.context, data,
-                    this.panel.getUserInput(), this.viewerParameters);
+                this.particleSystem = new ParticleSystem(this.scene.context, data, this.panel.getUserInput(), this.viewerParameters);
                 this.addPrimitives();
 
                 this.setupEventListeners();
-            });
+            }
+        );
 
         this.imageryLayers = this.viewer.imageryLayers;
         this.setGlobeLayer(this.panel.getUserInput());
