@@ -140,6 +140,9 @@ class Wind3D {
         window.addEventListener('layerOptionsChanged', function () {
             that.setGlobeLayer(that.panel.getUserInput());
         });
+        window.addEventListener('timeOptionsChanged', function () {
+            that.setGlobeLayer(that.panel.getUserInput());
+        })
     }
 
     debug() {

@@ -1,8 +1,10 @@
 var DataProcess = (function () {
     var data;
 
+    //var loadData = async function (){
     var loadData = async function(filePath){
         data = {};
+        //var rawdata = await processFileFromUrl(fileUrl)
 
     
         var rawdata = await fetch(filePath).then(r=>r.json());
@@ -46,9 +48,9 @@ var DataProcess = (function () {
         };
 
         data.lev = {
-            array: new Float32Array([1]),
-            min: 1,
-            max: 1
+            array: new Float32Array([0]),
+            min: 0,
+            max: 0
         };
 
         data.U = {
