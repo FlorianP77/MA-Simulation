@@ -1,5 +1,18 @@
 class Panel {
     constructor() {
+        this.route = defaultRouteOptions.route
+
+        
+        this.date = shipOptions.startTime;
+        this.timeStep = defaultTimeOptions.timeStep;
+
+        this.windUpdateStep = defaultTimeOptions.windUpdateStep
+
+        this.windFileDate = this.date.slice(0, 4) + this.date.slice(5, 7) + this.date.slice(8, 10)
+        this.windFileTime = String((Math.floor(parseInt(this.date.slice(11, 13), 10) / this.windUpdateStep) * this.windUpdateStep)).padStart(2, '0') + '00'
+
+
+
         this.maxParticles = defaultParticleSystemOptions.maxParticles;
         this.particleHeight = defaultParticleSystemOptions.particleHeight;
         this.fadeOpacity = defaultParticleSystemOptions.fadeOpacity;
@@ -8,67 +21,105 @@ class Panel {
         this.speedFactor = defaultParticleSystemOptions.speedFactor;
         this.lineWidth = defaultParticleSystemOptions.lineWidth;
 
-        this.globeLayer = defaultLayerOptions.globeLayer;
-        this.WMS_URL = defaultLayerOptions.WMS_URL;
+        this.globeLayer = defaultLayerOptions.globeLayer
+        this.WMS_URL = "https://www.ncei.noaa.gov/thredds/wms/model-gfs-g4-anl-files/" + this.windFileDate.slice(0, 6) + "/" + this.windFileDate + "/gfs_4_" + this.windFileDate + "_" + this.windFileTime + "_" + this.timeStep + ".grb2"
 
-        this.date = defaultTimeOptions.date;
-        this.time = defaultTimeOptions.time;
+        const layerNames = globeLayers.map(layer => layer.name);
 
-        var layerNames = [];
-        globeLayers.forEach(function (layer) {
-            layerNames.push(layer.name);
+        this.layerToShow = layerNames[0]
+
+
+        this.startingPoint = defaultRouteOptions.startingPoint
+        this.destination = defaultRouteOptions.destination
+
+
+
+        
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            this.initGUI(layerNames);
         });
-        this.layerToShow = layerNames[0];
-
-        var onParticleSystemOptionsChange = function () {
-            var event = new CustomEvent('particleSystemOptionsChanged');
-            window.dispatchEvent(event);
-        }
-
-        const that = this;
-        var onLayerOptionsChange = function () {
-            for (var i = 0; i < globeLayers.length; i++) {
-                if (that.layerToShow == globeLayers[i].name) {
-                    that.globeLayer = globeLayers[i];
-                    break;
-                }
-            }
-            var layerEvent = new CustomEvent('layerOptionsChanged');
-            window.dispatchEvent(layerEvent);
-        }
-
-        var onTimeOptionsChange = function() {
-            console.log(that.time)
-            console.log(that.date.slice(0, -2))
-                            //https://www.ncei.noaa.gov/thredds/wms/model-gfs-g4-anl-files/      202402                  /    20240205     /gfs_4_     20240205   _     1800        _003.grb2",
-            var changedUrl = "https://www.ncei.noaa.gov/thredds/wms/model-gfs-g4-anl-files/" + that.date.slice(0, -2) + "/" + that.date + "/gfs_4_" + that.date + "_" + that.time + "_003.grb2"
-            console.log(changedUrl)
-            that.WMS_URL = changedUrl 
-
-            var timeEvent = new CustomEvent('timeOptionsChanged');
-            window.dispatchEvent(timeEvent);
-        }
-
-        window.onload = function () {
-            var gui = new dat.GUI({ autoPlace: false });
-            gui.add(that, 'maxParticles', 1, 256 * 256, 1).onFinishChange(onParticleSystemOptionsChange);
-            gui.add(that, 'particleHeight', 1, 10000, 1).onFinishChange(onParticleSystemOptionsChange);
-            gui.add(that, 'fadeOpacity', 0.90, 0.999, 0.001).onFinishChange(onParticleSystemOptionsChange);
-            gui.add(that, 'dropRate', 0.0, 0.1).onFinishChange(onParticleSystemOptionsChange);
-            gui.add(that, 'dropRateBump', 0, 0.2).onFinishChange(onParticleSystemOptionsChange);
-            gui.add(that, 'speedFactor', 0.05, 8).onFinishChange(onParticleSystemOptionsChange);
-            gui.add(that, 'lineWidth', 0.01, 16.0).onFinishChange(onParticleSystemOptionsChange);
-
-            gui.add(that, 'layerToShow', layerNames).onFinishChange(onLayerOptionsChange);
-
-            gui.add(that, 'date').onFinishChange(onTimeOptionsChange);
-            gui.add(that, 'time').onFinishChange(onTimeOptionsChange);
-
-            var panelContainer = document.getElementsByClassName('cesium-widget').item(0);
-            gui.domElement.classList.add('myPanel');
-            panelContainer.appendChild(gui.domElement);
-        };
+            
     }
+
+    initGUI(layerNames) {
+        const gui = new dat.GUI({ autoPlace: false });
+        gui.add(this, 'maxParticles', 1, 256 * 256, 1).onFinishChange(this.onParticleSystemOptionsChange.bind(this));
+        gui.add(this, 'particleHeight', 1, 10000, 1).onFinishChange(this.onParticleSystemOptionsChange.bind(this));
+        gui.add(this, 'fadeOpacity', 0.90, 0.999, 0.001).onFinishChange(this.onParticleSystemOptionsChange.bind(this));
+        gui.add(this, 'dropRate', 0.0, 0.1).onFinishChange(this.onParticleSystemOptionsChange.bind(this));
+        gui.add(this, 'dropRateBump', 0, 0.2).onFinishChange(this.onParticleSystemOptionsChange.bind(this));
+        gui.add(this, 'speedFactor', 1, 10).onFinishChange(this.onParticleSystemOptionsChange.bind(this));
+        gui.add(this, 'lineWidth', 1, 10).onFinishChange(this.onParticleSystemOptionsChange.bind(this));
+
+        gui.add(this, 'layerToShow', layerNames).onFinishChange(this.onLayerOptionsChange.bind(this));
+
+        gui.add(this, 'date').onFinishChange(this.actualizeTime.bind(this));
+        gui.add(this, 'timeStep').onFinishChange(this.onTimeOptionsChange.bind(this));
+
+        gui.add(this, 'startingPoint').onFinishChange(this.onRouteOptionsChange.bind(this));
+        gui.add(this, 'destination').onFinishChange(this.onRouteOptionsChange.bind(this));
+
+        gui.add(this, 'route', routes).onFinishChange(this.onRouteOptionsChange.bind(this));
+
+        const panelContainer = document.getElementsByClassName('cesium-widget').item(0);
+        gui.domElement.classList.add('myPanel');
+        panelContainer.appendChild(gui.domElement);
+    };
+
+    actualizeTime() {
+        wind3D.viewer.clock.currentTime = Cesium.JulianDate.fromIso8601(this.date)
+    }
+
+
+    onParticleSystemOptionsChange() {
+        var event = new CustomEvent('particleSystemOptionsChanged');
+        window.dispatchEvent(event);
+    }
+
+    onLayerOptionsChange() {
+        this.globeLayer = globeLayers.find(layer => layer.name === this.layerToShow);
+        var layerEvent = new CustomEvent('layerOptionsChanged');
+        window.dispatchEvent(layerEvent);
+    }
+
+    onTimeOptionsChange() {
+
+        this.WMS_URL = "https://www.ncei.noaa.gov/thredds/wms/model-gfs-g4-anl-files/" + this.windFileDate.slice(0, 4) + "/" + this.windFileDate + "/gfs_4_" + this.windFileDate + "_" + this.windFileTime + "_" + this.timeStep + ".grb2"
+        wind3D.dataFile = this.windFileDate + '_' + this.windFileTime + '_' + this.timeStep + '.json'
+
+
+        var timeEvent = new CustomEvent('timeOptionsChanged');
+        window.dispatchEvent(timeEvent);
+    }
+
+    onRouteOptionsChange(){
+        var routeEvent = new CustomEvent('routeOptionsChanged');
+        window.dispatchEvent(routeEvent);
+    }
+
+
+
+
+
+
+    checkWindFile(currentTime) {
+
+
+        if (parseInt(currentTime.slice(11, 13), 10) - parseInt(this.windFileTime.slice(0, 2), 10) >= this.windUpdateStep/2 || currentTime.slice(0, 4) + currentTime.slice(5, 7) + currentTime.slice(8, 10) != this.windFileDate){
+            this.windFileDate = currentTime.slice(0, 4) + currentTime.slice(5, 7) + currentTime.slice(8, 10)
+            const roundedHours = (Math.round(parseInt(currentTime.slice(11, 13), 10) / this.windUpdateStep) * this.windUpdateStep)
+            this.windFileTime = String(roundedHours).padStart(2, '0') + '00'
+            return true
+        }
+
+        else{
+            return false
+        }
+
+    }
+
 
     getUserInput() {
         // make sure maxParticles is exactly the square of particlesTextureSize
@@ -87,7 +138,9 @@ class Panel {
             globeLayer: this.globeLayer,
             WMS_URL: this.WMS_URL,
             date: this.date,
-            time: this.time
+            timeStep: this.timeStep,
+            startingPoint: this.startingPoint,
+            destination: this.destination
         }
     }
 }
@@ -95,35 +148,64 @@ class Panel {
 
 class OutputPanel {
     constructor() {
-        this.dataValue1 = 0;
-        this.dataValue2 = 0;
-        this.dataValue3 = 0;
 
-        window.onload = function () {
-            
-            var gui = new dat.GUI({ autoPlace: false });
+        this.viewer = wind3D.viewer;
 
-            // Füge Kontroll-Elemente hinzu
-            gui.add(this, 'dataValue1').name('Value 1').listen();
-            gui.add(this, 'dataValue2').name('Value 2').listen();
-            gui.add(this, 'dataValue3').name('Value 3').listen();
+        document.addEventListener('DOMContentLoaded', () => {
+            this.initGUI();
+        });
 
-            gui.domElement.classList.add('myOutputPanel');
-            document.body.appendChild(gui.domElement);
-
-        }.bind(this);
-
-        // Update die Daten in Echtzeit
-        this.startRealTimeUpdates();
+        this.startRealTimeUpdates()
     }
 
+
+    initGUI() {
+        const gui = new dat.GUI({ autoPlace: false, width: 400});
+
+        gui.add(kite, 'fuelConsumptionWithoutKite')./*name.*/listen();
+        gui.add(kite, 'fuelConsumptionWithKite').listen();
+        gui.add(kite, 'fuelSavings').listen();
+        gui.add(ship, 'currentSpeed').listen();
+        gui.add(kite, 'isKiteEnabled').listen();
+        gui.add(kite, 'forceProducedByKite').listen();
+        gui.add(kite, 'forceProducedByMotor').listen();
+        gui.add(kite, 'currentWindDirection').listen();
+        gui.add(panel, 'windFileDate').listen();
+        gui.add(panel, 'windFileTime').listen();
+
+        var panelContainer = document.getElementsByClassName('cesium-widget').item(0);
+        gui.domElement.classList.add('myOutputPanel');
+        panelContainer.appendChild(gui.domElement);
+    };
+
+
+
     startRealTimeUpdates() {
-        // Beispielhafte Aktualisierung der Datenwerte
+
+        let oldTime = -1
+
         setInterval(() => {
-            this.dataValue1 = Math.random() * 100;
-            this.dataValue2 = Math.random() * 50;
-            this.dataValue3 = Math.random() * 200;
-        }, 1000); // Aktualisierung alle 1000 ms (1 Sekunde)
+            const elapsedTime = Cesium.JulianDate.secondsDifference(ship.viewer.clock.currentTime, ship.start);
+
+            
+
+            if (elapsedTime > oldTime) {
+                
+                oldTime += ship.updateInterval
+
+                if (ship.active){
+                    ship.positionTracker()
+
+                    kite.outputCalculation(ship.longitude, ship.latitude, ship.level, ship.direction)
+                }
+
+                const currentTime = Cesium.JulianDate.toIso8601(this.viewer.clock.currentTime)
+                if(panel.checkWindFile(currentTime)){
+                    panel.onTimeOptionsChange()
+
+                };
+            }
+        }, shipOptions.checkInterval * ship.viewer.clock.multiplier);
 
     }
 }

@@ -14,7 +14,7 @@ uniform vec2 vSpeedRange;
 uniform float pixelSize;
 uniform float speedFactor;
 
-float speedScaleFactor = speedFactor * pixelSize;
+float speedScaleFactor = speedFactor * pixelSize * 0.1;
 
 varying vec2 v_textureCoordinates;
 

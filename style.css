@@ -19,8 +19,24 @@ body, html {
 
 .myOutputPanel {
   position: absolute;
-  top: 20px;  
-  left: 500px; 
-  width: 200px;  
+  top: 5px;  
+  right: 5px;
+  width: 500px;
   z-index: 1000;
+}
+
+
+.myOutputPanel .property-name {
+  width: 200px; /* Beispiel für die Breite der Titel */
+  overflow: visible; /* Verhindert, dass der Text überläuft */
+  text-overflow: ellipsis; /* Zeigt "..." an, wenn der Text zu lang ist */
+  white-space: normal; /* Verhindert Zeilenumbruch */
+}
+
+/* Regel für die Breite der Werte */
+.myOutputPanel .property-value {
+  width: 150px; /* Beispiel für die Breite der Werte */
+  overflow: visible; /* Verhindert, dass der Text überläuft */
+  text-overflow: ellipsis; /* Zeigt "..." an, wenn der Text zu lang ist */
+  white-space: normal; /* Verhindert Zeilenumbruch */
 }

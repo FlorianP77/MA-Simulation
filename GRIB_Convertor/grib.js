@@ -1,13 +1,19 @@
-import {readFile} from "fs/promises"
 import {grib2} from "./grib2vanilla.js"
 import { writeFileSync } from "fs"
 import path from 'path'
 import fetch from 'node-fetch';
 
-const fileUrl = 'https://www.ncei.noaa.gov/data/global-forecast-system/access/grid-004-0.5-degree/analysis/202206/20220605/gfs_4_20220605_0000_000.grb2'
+const date = "20240504"
+const time = "0000"
+const timeStep = "003"
 
 
-async function processFileFromUrl(url) {
+
+const fileUrl = 'https://www.ncei.noaa.gov/data/global-forecast-system/access/grid-004-0.5-degree/analysis/' + date.slice(0, -2) + '/' + date + '/gfs_4_' + date + '_' + time + '_' + timeStep + '.grb2'
+const outputFilePath = path.join('../dataSets/' + date + '_' + time + '_' + timeStep + '.json')
+
+
+async function processFileFromUrl(url, filePath) {
 
   const response = await fetch(url);
 
@@ -33,10 +39,8 @@ async function processFileFromUrl(url) {
     v: vData.sections.section7.points,
   }
 
-  return data
-
-  //writeFileSync(outputFilePath, JSON.stringify(data))
+  writeFileSync(filePath, JSON.stringify(data))
 }
 
 
-//processFileFromUrl(fileUrl)
+processFileFromUrl(fileUrl, outputFilePath)

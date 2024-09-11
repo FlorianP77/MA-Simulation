@@ -1,8 +1,59 @@
+const kiteOptions = {
+    force: 30,
+    maxAngle: 90,
+
+    realScale: 1,
+    maximumScale: 400000,
+    offsetHeight: - 1000000,
+    offsetSideward: 0,
+    offsetForward: 0
+}
+
+
+
+const shipOptions = {
+    //alles in Newton
+    weight: 1000,
+    resistanceAtTopspeed: 100,
+
+    realScale: 1,
+    maximumScale: 40000,
+    
+
+
+    startTime: "2024-06-16T00:00:00Z",
+
+    clockMultiplier: 1,
+    updateInterval: 1,
+    checkInterval: 1000,
+    shipLevel: 1
+}
+
+const defaultTimeOptions = {
+
+    timeStep: "003",
+
+
+    windUpdateStep: 6  //in hours, min: 6, max:24
+}
+
+const routes = {
+    "genuaNewYork": genuaNewYork, 
+    "test": testRoute
+};
+
+const defaultRouteOptions = {
+    startingPoint: "null",
+    destination: "null",
+    route: routes["genuaNewYork"]
+}
+
 const fileOptions = {
     dataDirectory: 'dataSets/',
-    dataFile: 'windData.json',
+    dataFile: defaultTimeOptions.date + '_' + defaultTimeOptions.time + '_' + defaultTimeOptions.timeStep + '.json',
     glslDirectory: 'glsl/',
-    shipDirectory: 'models/ship.gltf',
+    shipDirectory: 'models/ship.glb',
+    kiteDirectory: 'models/kite.glb',
     routeDirectory: 'routes/shipRoute.json'
 }
 
@@ -14,8 +65,8 @@ const defaultParticleSystemOptions = {
     fadeOpacity: 0.996,
     dropRate: 0.003,
     dropRateBump: 0.01,
-    speedFactor: 1.0,
-    lineWidth: 4.0
+    speedFactor: 5.0,
+    lineWidth: 2.0
 }
 
 const globeLayers = [
@@ -25,17 +76,7 @@ const globeLayers = [
     { name: "WorldTerrain", type: "WorldTerrain" }
 ]
 
+
 const defaultLayerOptions = {
-    "globeLayer": globeLayers[0],
-    "WMS_URL": "https://www.ncei.noaa.gov/thredds/wms/model-gfs-g4-anl-files/202212/20221206/gfs_4_20221206_1800_003.grb2",
-}
-
-const defaultTimeOptions = {
-    date: "20240806",
-    time: "0000"
-}
-
-const defaultShipOptions = {
-    startTime: "2020-03-09T23:10:00Z",
-    clockMultiplier: 1
+    globeLayer: globeLayers[0]
 }

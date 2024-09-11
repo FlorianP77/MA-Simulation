@@ -6,10 +6,16 @@ class Wind3D {
             baseLayerPicker: false,
             geocoder: false,
             infoBox: false,
+            selectionIndicator: false,
             fullscreenElement: 'cesiumContainer',
             // useBrowserRecommendedResolution can be set to false to improve the render quality
-            // useBrowserRecommendedResolution: false,
-            scene3DOnly: true
+            useBrowserRecommendedResolution: false,
+            
+            scene3DOnly: true,
+
+            homeButton: false,
+            navigationHelpButton: false,
+            sceneModePicker: false,
         }
 
         this.viewer = new Cesium.Viewer('cesiumContainer', options);
@@ -17,6 +23,16 @@ class Wind3D {
         this.camera = this.viewer.camera;
 
         this.panel = panel;
+
+        this.dataFile = panel.windFileDate + '_' + panel.windFileTime + '_' + panel.timeStep + '.json'
+
+
+        var creditContainer = document.getElementsByClassName('cesium-credit-textContainer')[0];
+        creditContainer.style.display = 'none';
+
+        var cesiumCredit = document.getElementsByClassName('cesium-credit-logoContainer')[0];
+        cesiumCredit.style.display = 'none';
+
 
         this.viewerParameters = {
             lonRange: new Cesium.Cartesian2(),
@@ -27,18 +43,44 @@ class Wind3D {
         this.globeBoundingSphere = new Cesium.BoundingSphere(Cesium.Cartesian3.ZERO, 0.99 * 6378137.0);
         this.updateViewerParameters();
 
+        this.initializeData();
 
-        DataProcess.loadData(fileOptions.dataDirectory + fileOptions.dataFile).then(
+        this.setGlobeLayer(this.panel.getUserInput());
+
+        this.setupEventListeners();
+    }
+
+    initializeData() {
+
+        DataProcess.loadData(fileOptions.dataDirectory + this.dataFile).then(
             (data) => {
                 this.particleSystem = new ParticleSystem(this.scene.context, data, this.panel.getUserInput(), this.viewerParameters);
                 this.addPrimitives();
-
-                this.setupEventListeners();
             }
         );
+    }
 
-        this.imageryLayers = this.viewer.imageryLayers;
-        this.setGlobeLayer(this.panel.getUserInput());
+    clearParticleSystem() {
+
+        this.particleSystem.particlesComputing.destroyParticlesTextures();
+    
+        Object.keys(this.particleSystem.particlesComputing.windTextures).forEach((key) => {
+            this.particleSystem.particlesComputing.windTextures[key].destroy();
+        });
+
+        Object.keys(this.particleSystem.particlesRendering.framebuffers).forEach((key) => {
+            this.particleSystem.particlesRendering.framebuffers[key].destroy();
+        });
+        
+        this.scene.primitives.remove(this.particleSystem.particlesComputing.primitives.calculateSpeed);
+        this.scene.primitives.remove(this.particleSystem.particlesComputing.primitives.updatePosition);
+        this.scene.primitives.remove(this.particleSystem.particlesComputing.primitives.postProcessingPosition);
+        this.scene.primitives.remove(this.particleSystem.particlesRendering.primitives.segments);
+        this.scene.primitives.remove(this.particleSystem.particlesRendering.primitives.trails);
+        this.scene.primitives.remove(this.particleSystem.particlesRendering.primitives.screen);
+
+        // Setze das Partikelsystem-Objekt auf null, um es freizugeben
+        this.particleSystem = null;
     }
 
     addPrimitives() {
@@ -141,23 +183,12 @@ class Wind3D {
             that.setGlobeLayer(that.panel.getUserInput());
         });
         window.addEventListener('timeOptionsChanged', function () {
-            that.setGlobeLayer(that.panel.getUserInput());
+            that.clearParticleSystem();
+            that.initializeData();
         })
-    }
 
-    debug() {
-        const that = this;
-
-        var animate = function () {
-            that.viewer.resize();
-            that.viewer.render();
-            requestAnimationFrame(animate);
-        }
-
-        var spector = new SPECTOR.Spector();
-        spector.displayUI();
-        spector.spyCanvases();
-
-        animate();
+        window.addEventListener('routeOptionsChanged', function () {
+            ship.reset()
+        })
     }
 }
