@@ -9,13 +9,14 @@ class Wind3D {
             selectionIndicator: false,
             fullscreenElement: 'cesiumContainer',
             // useBrowserRecommendedResolution can be set to false to improve the render quality
-            useBrowserRecommendedResolution: false,
+            //useBrowserRecommendedResolution: false,
             
             scene3DOnly: true,
 
             homeButton: false,
             navigationHelpButton: false,
             sceneModePicker: false,
+            fullscreenButton: false,
         }
 
         this.viewer = new Cesium.Viewer('cesiumContainer', options);
@@ -24,7 +25,7 @@ class Wind3D {
 
         this.panel = panel;
 
-        this.dataFile = panel.windFileDate + '_' + panel.windFileTime + '_' + panel.timeStep + '.json'
+        this.dataFile = panel.windFileDate + '_' + panel.windFileTime + '_' + panel.forecastHours + '.json'
 
 
         var creditContainer = document.getElementsByClassName('cesium-credit-textContainer')[0];
@@ -54,13 +55,22 @@ class Wind3D {
 
         DataProcess.loadData(fileOptions.dataDirectory + this.dataFile).then(
             (data) => {
+                this.updateViewerParameters();
                 this.particleSystem = new ParticleSystem(this.scene.context, data, this.panel.getUserInput(), this.viewerParameters);
                 this.addPrimitives();
+                kite.windData = data
             }
         );
     }
 
     clearParticleSystem() {
+
+        if (!this.particleSystem || !this.particleSystem.particlesComputing) {
+          console.log(
+            "Particle system or particlesComputing is null or undefined."
+          );
+          return;
+        }
 
         this.particleSystem.particlesComputing.destroyParticlesTextures();
     
@@ -156,7 +166,9 @@ class Wind3D {
 
         this.camera.moveEnd.addEventListener(function () {
             that.updateViewerParameters();
-            that.particleSystem.applyViewerParameters(that.viewerParameters);
+            if (that.particleSystem) {
+                that.particleSystem.applyViewerParameters(that.viewerParameters);
+            }
             that.scene.primitives.show = true;
         });
 
@@ -168,7 +180,7 @@ class Wind3D {
         });
 
         this.scene.preRender.addEventListener(function () {
-            if (resized) {
+            if (resized && that.particleSystem) {
                 that.particleSystem.canvasResize(that.scene.context);
                 resized = false;
                 that.addPrimitives();
@@ -183,12 +195,17 @@ class Wind3D {
             that.setGlobeLayer(that.panel.getUserInput());
         });
         window.addEventListener('timeOptionsChanged', function () {
+
             that.clearParticleSystem();
             that.initializeData();
         })
 
-        window.addEventListener('routeOptionsChanged', function () {
-            ship.reset()
+        window.addEventListener('reset', function () {
+            that.viewer.clock.currentTime = Cesium.JulianDate.fromIso8601(panel.date);
+            
+            ship.reset();
         })
+
+
     }
 }

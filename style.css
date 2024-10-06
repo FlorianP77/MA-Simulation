@@ -6,7 +6,7 @@ body, html {
 }
   
 #cesiumContainer {
-  width: 90%;
+  width: 99%;
   height: 100%;
 }
 
@@ -26,17 +26,17 @@ body, html {
 }
 
 
-.myOutputPanel .property-name {
-  width: 200px; /* Beispiel für die Breite der Titel */
-  overflow: visible; /* Verhindert, dass der Text überläuft */
-  text-overflow: ellipsis; /* Zeigt "..." an, wenn der Text zu lang ist */
-  white-space: normal; /* Verhindert Zeilenumbruch */
+/*.myOutputPanel .property-name {
+  width: 300px; 
+  overflow: visible; 
+  text-overflow: ellipsis; 
+  white-space: normal; 
 }
 
-/* Regel für die Breite der Werte */
 .myOutputPanel .property-value {
-  width: 150px; /* Beispiel für die Breite der Werte */
-  overflow: visible; /* Verhindert, dass der Text überläuft */
-  text-overflow: ellipsis; /* Zeigt "..." an, wenn der Text zu lang ist */
-  white-space: normal; /* Verhindert Zeilenumbruch */
+  width: 200px;
+  overflow: visible;
+  text-overflow: ellipsis; 
+  white-space: normal; 
 }
+

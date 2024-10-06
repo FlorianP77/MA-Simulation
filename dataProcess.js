@@ -67,10 +67,7 @@ var DataProcess = (function () {
         return data
     }
 
-    var getData = function() {
-        return data;
-    }
-
+   
 
     var randomizeParticles = function (maxParticles, viewerParameters) {
         var array = new Float32Array(4 * maxParticles);
@@ -86,7 +83,6 @@ var DataProcess = (function () {
 
     return {
         loadData: loadData,
-        getData: getData,
         randomizeParticles: randomizeParticles,
     };
 
