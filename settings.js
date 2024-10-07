@@ -4,12 +4,13 @@ const kiteOptions = {
   cA: 1.2,
   gZ: 6,
 
-  kiteAngle: 0,
+  kiteAngle: 0,  //Grad
+  kiteHeightAngle: 45, //Grad
   
 
 
 
-  realScale: 100,
+  realScale: 1000,
   maximumScale: 5000 * 30,
 
   minimumPixelSize: 64,

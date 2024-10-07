@@ -49,6 +49,8 @@ class Kite{
         this.co2EmissionsWithKite = 0;
         this.co2Savings = 0;
 
+        this.kiteEfficiency = 0;
+
         this.kiteFormula = "formula";
         this.motorFormula = "formula";
 
@@ -140,40 +142,45 @@ class Kite{
 
         this.windSpeed = Math.sqrt(this.u ** 2 + this.v ** 2);
 
-        let dirRealRad = Math.atan2(this.u, this.v)   //0 = Osten; 90:Norden
-        let dirReal = ((dirRealRad * 180) / Math.PI + 360) % 360;
-        this.windDirection = (360 - ((dirReal + 90) % 360)) % 360;   //0 = Norden; 90:Osten
+        let dirReal = Math.atan2(-this.u, -this.v)   //0 = Osten; 90:Norden
+        this.windDirection = (2.5*Math.PI - dirReal) % 2*Math.PI;   //0 = Norden; 90:Osten
 
  
         this.differenceDirection = Math.abs(this.windDirection - ship.shipDirection)
 
-        if (this.differenceDirection > 180){
-            this.differenceDirection = 360 - this.differenceDirection
+        if (this.differenceDirection > Math.PI){
+            this.differenceDirection = 2*Math.PI - this.differenceDirection
         }
 
         
 
-        ship.sp
 
 
         this.shipWindSpeed = (this.windSpeed**2 + ship.shipSpeed**2 - 2 * this.windSpeed * ship.shipSpeed * Math.cos(this.differenceDirection))**0.5
 
-        this.shipWindDirection = this.differenceDirection
-        //this.shipWindDirection = Math.acos(this.windSpeed * Math.cos(this.differenceDirection) + ship.shipSpeed / this.shipWindSpeed)
-
+        console.log(ship.shipSpeed, this.shipWindSpeed, this.differenceDirection, this.windSpeed)
 
         
+        //this.shipWindDirection = Math.acos(this.windSpeed * Math.cos(this.differenceDirection) + ship.shipSpeed / this.shipWindSpeed)
 
-        if (this.shipWindDirection < 90  && this.shipWindSpeed > 0){
+        //console.log(this.shipWindDirection)
+
+        this.shipWindDirection = Math.acos((this.shipWindSpeed**2 + ship.shipSpeed**2 - this.windSpeed**2) / (2 * this.shipWindSpeed * ship.shipSpeed))
+
+        console.log(this.shipWindDirection)
+        
+
+        if (this.shipWindDirection < 0.5*Math.PI  && this.shipWindSpeed > 0){
 
 
-            let gamma = Math.atan(1 / this.gZ) * (180 / Math.PI);//ARCTAN(1/this.gZ)*180/PI()
+            let gamma = Math.atan(1 / this.gZ) * 180 / Math.PI;//ARCTAN(1/this.gZ)*180/PI()
             let flowVelocity = (this.shipWindSpeed * Math.sin((90 - this.kiteAngle) * Math.PI / 180)) / Math.sin(gamma * Math.PI / 180);//(this.windSpeed*SIN((90-this.kiteAngle)*PI()/180))/(SIN((gamma)*PI()/180))
 
             let allKiteForce = 1.224 / 2 * (flowVelocity**2) * this.kiteSize * this.cA
 
             this.active = true
-            this.kiteForce = allKiteForce * Math.cos(this.shipWindDirection * Math.PI / 180)
+
+            this.kiteForce = allKiteForce * Math.cos(this.shipWindDirection) * Math.cos(kiteOptions.kiteHeightAngle / 180 * Math.PI)//*********
         }
 
         else{
@@ -202,10 +209,17 @@ class Kite{
 
         this.fuelConsumptionWithKite = this.fuelConsumptionWithoutKite - this.fuelSavings
 
+        
+        this.kiteEfficiency = (this.fuelConsumptionWithoutKite === 0) 
+        ? 0 
+        : 100 - (this.fuelConsumptionWithKite / this.fuelConsumptionWithoutKite * 100);
+
 
 
         this.co2EmissionsWithoutKite = this.fuelConsumptionWithoutKite * this.co2PerFuel
+
         this.co2Savings = this.fuelSavings * this.co2PerFuel
+
         this.co2EmissionsWithKite = this.fuelConsumptionWithKite * this.co2PerFuel
 
         this.timestampLastUpdate = ship.dataPoint[1] / ship.shipSpeed
@@ -216,6 +230,11 @@ class Kite{
         
         
         
+        /*
+        Ein Kite kann effektiv genutzt werden, wenn der Wind aus einem Winkel von etwa 45° bis 135° relativ zur Fahrtrichtung des Schiffes kommt.
+        https://www.oceanergy.com/technology-kite-propulsion-systems-ships/
+        https://www.cargo-partner.com/de/trendletter/issue-10/segel-und-kites-unterstuetzen-frachtschiffe
+        */
         
         
         
@@ -223,32 +242,6 @@ class Kite{
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        //https://www.mimikama.org/co2-ausstoss-von-containerschiffen/
-        // 26,23 Newton pro Tonne
-        //https://casualnavigation.com/cargo-ship-speed-comparison-how-fast-do-they-go/
-
-
-
 
         /*
         Asien-Europa-Route:
@@ -275,19 +268,8 @@ class Kite{
         https://geohilfe.de/welthandel-seeweg-visualisiert/
         */
 
-        /*
 
-        https://www.vesselfinder.com/
-        https://www.rechnerabisz.de/hobby-und-freizeit/wassersport/bootsportrechner/
-        https://hansa-online.de/2011/06/schiffstechnik/68338/stroemungsmechanische-grundlagen-zum-widerstand-von-schiffen/
         
-        */
-
-        /*
-        Ein Kite kann effektiv genutzt werden, wenn der Wind aus einem Winkel von etwa 45° bis 135° relativ zur Fahrtrichtung des Schiffes kommt.
-        https://www.oceanergy.com/technology-kite-propulsion-systems-ships/
-        https://www.cargo-partner.com/de/trendletter/issue-10/segel-und-kites-unterstuetzen-frachtschiffe
-        */
         
     }
         

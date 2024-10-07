@@ -51,7 +51,7 @@ class Panel {
     gui.add(this, "lineWidth", 1, 10).name("Line Width").onFinishChange(this.onParticleSystemOptionsChange.bind(this));
     gui.add(this, "layerToShow", layerNames).name("Layer to Show").onFinishChange(this.onLayerOptionsChange.bind(this));
     gui.add(this, "date").name("Date").onFinishChange(this.actualizeTime.bind(this));
-    gui.add(this, "forecastHours").name("Forecast Hours").onFinishChange(this.actualizeTime.bind(this));
+//    gui.add(this, "forecastHours").name("Forecast Hours").onFinishChange(this.actualizeTime.bind(this));
     gui.add(this, "startingPoint", ports).name("Starting Point").onFinishChange(this.onRouteOptionsChange.bind(this));
     gui.add(this, "destination", ports).name("Destination").onFinishChange(this.onRouteOptionsChange.bind(this));
     gui.add(this, "panelShipTypeName", shipTypeNames).name("Ship Type").onFinishChange(this.onShipOptionsChange.bind(this));
@@ -197,22 +197,24 @@ class OutputPanel {
       gui.add(ship, "shipSpeed").name("Ship Speed (m/s)").listen(); // m/s
       gui.add(kite, "shipWindSpeed").name("Wind Speed on the ship (m/s)").listen(); // m/s
 
-      gui.add(kite, "motorForceWithoutKite").name("Motor Force without Kite (N)").listen(); // N
-      gui.add(kite, "motorForceWithKite").name("Motor Force with Kite (N)").listen(); // N
+ //     gui.add(kite, "motorForceWithoutKite").name("Motor Force without Kite (N)").listen(); // N
+ //     gui.add(kite, "motorForceWithKite").name("Motor Force with Kite (N)").listen(); // N
       gui.add(kite, "kiteForce").name("Kite Force (N)").listen(); // N
       gui.add(kite, "kiteFormula").name("Kite Formula").listen();
       gui.add(kite, "motorFormula").name("Motor Formula").listen();
       gui.add(kite, "active").name("is Kite active?").listen(); // boolean
 
-      gui.add(kite, "fuelConsumptionWithoutKite").name("Consumption without Kite (kg)").listen(); // kg
-      gui.add(kite, "fuelConsumptionWithKite").name("Consumption with Kite (kg)").listen(); // kg
+  //    gui.add(kite, "fuelConsumptionWithoutKite").name("Consumption without Kite (kg)").listen(); // kg
+  //    gui.add(kite, "fuelConsumptionWithKite").name("Consumption with Kite (kg)").listen(); // kg
       gui.add(kite, "fuelSavings").name("Fuel Savings (kg)").listen(); // kg
 
 
-      gui.add(kite, "co2EmissionsWithoutKite").name("CO2 Emissions without Kite (kg)").listen(); // kg
-      gui.add(kite, "co2EmissionsWithKite").name("CO2 Emissions with Kite (kg)").listen(); // kg
+  //    gui.add(kite, "co2EmissionsWithoutKite").name("CO2 Emissions without Kite (kg)").listen(); // kg
+  //    gui.add(kite, "co2EmissionsWithKite").name("CO2 Emissions with Kite (kg)").listen(); // kg
       gui.add(kite, "co2Savings").name("CO2 Savings (kg)").listen(); // kg
-    
+
+
+      gui.add(kite, "kiteEfficiency").name("Kite Efficiency (%)").listen(); // %
 
       gui.add(panel, "windFileDate").name("Wind File Date").listen();
       gui.add(panel, "windFileTime").name("Wind File Time").listen();
