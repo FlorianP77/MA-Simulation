@@ -1,6 +1,6 @@
 const kiteOptions = {
 
-  defaultKiteSize: 100, //in m^2
+  defaultKiteSize: 1000, //in m^2
   cA: 1.2,
   gZ: 6,
 
