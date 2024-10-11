@@ -4,8 +4,11 @@ const kiteOptions = {
   cA: 1.2,
   gZ: 6,
 
-  kiteAngle: 0,  //Grad
-  kiteHeightAngle: 45, //Grad
+
+  kiteHeightAngleLoop: 34, //Grad
+  kiteHeightAngleSinus: 30, //Grad
+
+  windWindowPosition: 4,
   
 
 
@@ -200,13 +203,7 @@ const routes = {
 
 const fileOptions = {
   dataDirectory: "dataSets/",
-  dataFile:
-    defaultTimeOptions.date +
-    "_" +
-    defaultTimeOptions.time +
-    "_" +
-    defaultTimeOptions.timeStep +
-    ".json",
+  dataFile: defaultTimeOptions.date + "_" + defaultTimeOptions.time + "_" + defaultTimeOptions.timeStep + ".json",
   glslDirectory: "glsl/",
   shipDirectory: "models/ship.glb",
   kiteDirectory: "models/kite.glb",

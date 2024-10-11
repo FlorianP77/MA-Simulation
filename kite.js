@@ -14,9 +14,16 @@ class Kite{
 
         this.kiteSize = kiteOptions.defaultKiteSize
 
-        this.kiteAngle = kiteOptions.kiteAngle
         this.cA = kiteOptions.cA
         this.gZ = kiteOptions.gZ
+        
+
+        this.gamma = Math.atan(1 / this.gZ) * 180 / Math.PI;//ARCTAN(1/this.gZ)*180/PI()
+
+        this.windowAngle = (90 - this.gamma) / 10 * kiteOptions.windWindowPosition
+
+        this.heightAngleLoop = kiteOptions.kiteHeightAngleLoop
+        this.heightAngleSinus = kiteOptions.kiteHeightAngleSinus
 
         
         this.u = 0;
@@ -25,12 +32,16 @@ class Kite{
         this.windDirection = 0;
         this.windSpeed = 0;
         this.differenceDirection = 0;
-        this.shipWindDirection
+        
 
 
 
         this.active = false
+        this.flymode = "nothing"
+
+
         this.shipWindSpeed = 0;
+        this.shipWindDirection = 0;
 
 
         this.fuelEnergyDensity = shipOptions.fuelEnergyDensity;
@@ -143,48 +154,61 @@ class Kite{
         this.windSpeed = Math.sqrt(this.u ** 2 + this.v ** 2);
 
         let dirReal = Math.atan2(-this.u, -this.v)   //0 = Osten; 90:Norden
-        this.windDirection = (2.5*Math.PI - dirReal) % 2*Math.PI;   //0 = Norden; 90:Osten
+        this.windDirection = ((2.5*Math.PI - dirReal) % 2*Math.PI) * 180 / Math.PI;   //0 = Norden; 90:Osten
 
  
         this.differenceDirection = Math.abs(this.windDirection - ship.shipDirection)
 
-        if (this.differenceDirection > Math.PI){
-            this.differenceDirection = 2*Math.PI - this.differenceDirection
+        if (this.differenceDirection > 180){
+            this.differenceDirection = 360 - this.differenceDirection
         }
 
         
 
 
 
-        this.shipWindSpeed = (this.windSpeed**2 + ship.shipSpeed**2 - 2 * this.windSpeed * ship.shipSpeed * Math.cos(this.differenceDirection))**0.5
+        this.shipWindSpeed = (this.windSpeed**2 + ship.shipSpeed**2 - 2 * this.windSpeed * ship.shipSpeed * Math.cos(this.differenceDirection / 180 * Math.PI))**0.5
 
-        console.log(ship.shipSpeed, this.shipWindSpeed, this.differenceDirection, this.windSpeed)
 
         
-        //this.shipWindDirection = Math.acos(this.windSpeed * Math.cos(this.differenceDirection) + ship.shipSpeed / this.shipWindSpeed)
 
-        //console.log(this.shipWindDirection)
-
-        this.shipWindDirection = Math.acos((this.shipWindSpeed**2 + ship.shipSpeed**2 - this.windSpeed**2) / (2 * this.shipWindSpeed * ship.shipSpeed))
-
+        this.shipWindDirection = Math.acos((this.shipWindSpeed**2 + ship.shipSpeed**2 - this.windSpeed**2) / (2 * this.shipWindSpeed * ship.shipSpeed)) * 180 / Math.PI
         console.log(this.shipWindDirection)
+
+
         
 
-        if (this.shipWindDirection < 0.5*Math.PI  && this.shipWindSpeed > 0){
+        if (this.shipWindDirection > (90 + 53)  && this.shipWindSpeed != 0){
+            
+            this.active = true
+            this.flymode = "looping"
 
 
-            let gamma = Math.atan(1 / this.gZ) * 180 / Math.PI;//ARCTAN(1/this.gZ)*180/PI()
-            let flowVelocity = (this.shipWindSpeed * Math.sin((90 - this.kiteAngle) * Math.PI / 180)) / Math.sin(gamma * Math.PI / 180);//(this.windSpeed*SIN((90-this.kiteAngle)*PI()/180))/(SIN((gamma)*PI()/180))
+            
+            let flowVelocity = (this.shipWindSpeed * Math.sin((90 - this.windowAngle) * Math.PI / 180)) / Math.sin((this.gamma) * Math.PI / 180);//(this.windSpeed*SIN((90-this.averageWindowAngle)*PI()/180))/(SIN((gamma)*PI()/180))
 
             let allKiteForce = 1.224 / 2 * (flowVelocity**2) * this.kiteSize * this.cA
 
-            this.active = true
+            this.kiteForce = allKiteForce * Math.cos((180 - this.shipWindDirection) / 180 * Math.PI) * Math.cos(this.heightAngleLoop / 180 * Math.PI)
+        }
 
-            this.kiteForce = allKiteForce * Math.cos(this.shipWindDirection) * Math.cos(kiteOptions.kiteHeightAngle / 180 * Math.PI)//*********
+        else if ((this.shipWindDirection + this.windowAngle) > 90 && this.shipWindSpeed != 0){
+            
+            this.active = true
+            this.flymode = "sinus"
+
+
+            let flowVelocity = (this.shipWindSpeed * Math.sin((90 - this.windowAngle) * Math.PI / 180)) / Math.sin(this.gamma * Math.PI / 180);//(this.windSpeed*SIN((90-this.averageWindowAngle)*PI()/180))/(SIN((gamma)*PI()/180))
+
+            let allKiteForce = 1.224 / 2 * (flowVelocity**2) * this.kiteSize * this.cA
+
+            this.kiteForce = allKiteForce * Math.cos((180 - (this.shipWindDirection + this.windowAngle)) / 180 * Math.PI) * Math.cos(this.heightAngleSinus / 180 * Math.PI)
+
         }
 
         else{
             this.active = false
+            this.flymode = "nothing"
             this.kiteForce = 0
         }
 
@@ -195,7 +219,7 @@ class Kite{
         // F = P / Geschwindigkeit des Schiffs
         let fuelConsumptionInKgPerSecond = (ship.shipType.fuelConsumption[shipSpeeds.indexOf(ship.shipSpeedKnots)] / 86400) * 1000;
 
-        this.motorForceWithoutKite = (fuelConsumptionInKgPerSecond * this.fuelEnergyDensity * this.motorEfficiency) / ship.shipSpeed; 
+        this.motorForceWithoutKite = (fuelConsumptionInKgPerSecond * this.fuelEnergyDensity * this.motorEfficiency) / 3600 / ship.shipSpeed; //****** */
 
         this.motorForceWithKite = this.motorForceWithoutKite - this.kiteForce;
 

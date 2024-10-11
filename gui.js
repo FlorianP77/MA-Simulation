@@ -200,10 +200,11 @@ class OutputPanel {
  //     gui.add(kite, "motorForceWithoutKite").name("Motor Force without Kite (N)").listen(); // N
  //     gui.add(kite, "motorForceWithKite").name("Motor Force with Kite (N)").listen(); // N
       gui.add(kite, "kiteForce").name("Kite Force (N)").listen(); // N
-      gui.add(kite, "kiteFormula").name("Kite Formula").listen();
-      gui.add(kite, "motorFormula").name("Motor Formula").listen();
+ //     gui.add(kite, "kiteFormula").name("Kite Formula").listen();
+ //     gui.add(kite, "motorFormula").name("Motor Formula").listen();
       gui.add(kite, "active").name("is Kite active?").listen(); // boolean
-
+      gui.add(kite, "flymode").name("Flymode").listen(); 
+      
   //    gui.add(kite, "fuelConsumptionWithoutKite").name("Consumption without Kite (kg)").listen(); // kg
   //    gui.add(kite, "fuelConsumptionWithKite").name("Consumption with Kite (kg)").listen(); // kg
       gui.add(kite, "fuelSavings").name("Fuel Savings (kg)").listen(); // kg
