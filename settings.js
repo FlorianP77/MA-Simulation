@@ -8,7 +8,8 @@ const kiteOptions = {
   kiteHeightAngleLoop: 34, //Grad
   kiteHeightAngleSinus: 30, //Grad
 
-  windWindowPosition: 4,
+  windWindowPositionLoop: 4,
+  windWindowPositionSinus: 5,
   
 
 
