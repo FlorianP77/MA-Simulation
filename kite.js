@@ -61,7 +61,8 @@ class Kite{
         this.co2EmissionsWithKite = 0;
         this.co2Savings = 0;
 
-        this.kiteEfficiency = 0;
+        this.currentKiteEfficiency = 0;
+        this.kiteEfficiencyOverall = 0;
 
         this.kiteFormula = "formula";
         this.motorFormula = "formula";
@@ -164,17 +165,22 @@ class Kite{
             this.differenceDirection = 360 - this.differenceDirection
         }
 
+        if(ship.shipSpeed != 0) {
+
+            this.shipWindSpeed = (this.windSpeed**2 + ship.shipSpeed**2 - 2 * this.windSpeed * ship.shipSpeed * Math.cos(this.differenceDirection / 180 * Math.PI))**0.5
+
+            this.shipWindDirection = Math.acos((this.shipWindSpeed**2 + ship.shipSpeed**2 - this.windSpeed**2) / (2 * this.shipWindSpeed * ship.shipSpeed)) * 180 / Math.PI
+        }
+
+        else {
+            this.shipWindSpeed = this.windSpeed
+
+            this.shipWindDirection = this.differenceDirection
+        }
         
 
 
-
-        this.shipWindSpeed = (this.windSpeed**2 + ship.shipSpeed**2 - 2 * this.windSpeed * ship.shipSpeed * Math.cos(this.differenceDirection / 180 * Math.PI))**0.5
-
-
-        
-
-        this.shipWindDirection = Math.acos((this.shipWindSpeed**2 + ship.shipSpeed**2 - this.windSpeed**2) / (2 * this.shipWindSpeed * ship.shipSpeed)) * 180 / Math.PI
-        console.log(this.shipWindDirection)
+        console.log("differenceDirection:", this.differenceDirection, "shipWinddirection:", this.shipWindDirection)
 
 
         
@@ -226,6 +232,11 @@ class Kite{
         ? 0
         : this.motorForceWithoutKite - this.kiteForce
 
+        
+        this.currentKiteEfficiency = (this.kiteForce === 0) 
+        ? 0 
+        : 100 - ((this.motorForceWithKite / this.motorForceWithoutKite) * 100);
+
 
         
     
@@ -237,7 +248,7 @@ class Kite{
         this.fuelSavings = this.fuelConsumptionWithoutKite - this.fuelConsumptionWithKite
 
         
-        this.kiteEfficiency = (this.fuelConsumptionWithoutKite === 0) 
+        this.kiteEfficiencyOverall = (this.fuelConsumptionWithoutKite === 0) 
         ? 0 
         : 100 - ((this.fuelConsumptionWithKite / this.fuelConsumptionWithoutKite) * 100);
 

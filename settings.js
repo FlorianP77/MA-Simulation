@@ -48,7 +48,7 @@ const shipOptions = {
   co2PerFuel: 3.114, // koeffizient
 
   //noch machen
-  //https://link.springer.com/chapter/10.1007/978-3-658-07697-9_70
+  //https://www.wartsila.com/sustainability/climate-and-environment/innovating-for-sustainability/improving-efficiency
   motorEfficiency: 0.5,
 
   startTime: "2024-06-16T00:00:00Z",
@@ -57,54 +57,6 @@ const shipOptions = {
   checkInterval: 500,
   shipLevel: 1,
 };
-
-/*const shipModels = [
-  {
-    name: "MSC Gulsun",
-    length: 400,
-    type: "Container Ship",
-    speed: 9.3,
-    cw: 0.0025,
-    surface: 20000,
-  },
-  {
-    name: "Ore Brasil",
-    length: 362,
-    type: "Ore Carrier",
-    speed: 6.7,
-    cw: 0.003,
-    surface: 30000,
-  },
-  {
-    name: "Seaspan Felixstowe",
-    length: 260,
-    type: "Container Ship",
-    speed: 10.3,
-    cw: 0.0025,
-    surface: 18000,
-  },
-  {
-    name: "Stena Impero",
-    length: 183,
-    type: "Ore Carrier",
-    speed: 6.9,
-    cw: 0.003,
-    surface: 15000,
-  },
-  {
-    name: "Arklow Raven",
-    length: 89,
-    type: "Container Ship",
-    speed: 9.3,
-    cw: 0.0025,
-    surface: 20000,
-  },
-];
-*/
-
-//const shipNames = shipModels.map((shipModel) => shipModel.name);
-
-
 
 
 

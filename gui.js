@@ -33,6 +33,8 @@ class Panel {
     this.shipSpeedKnots = this.panelShipSpeedKnots
     this.shipSpeed = parseInt(this.panelShipSpeedKnots) * 0.5144;
 
+    this.reset = false
+
 
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -57,6 +59,7 @@ class Panel {
     gui.add(this, "panelShipTypeName", shipTypeNames).name("Ship Type").onFinishChange(this.onShipOptionsChange.bind(this));
     gui.add(this, "panelShipSpeedKnots", shipSpeeds).name("Ship Speed (knots)").onFinishChange(this.onShipOptionsChange.bind(this));
     gui.add(kite, "kiteSize").name("Kite Size (m²)").onFinishChange(this.onShipOptionsChange.bind(this));
+    gui.add(this, "reset").name("Reset").onFinishChange(this.onReset.bind(this));
 
 
     const panelContainer = document.getElementsByClassName("cesium-widget").item(0);
@@ -64,6 +67,11 @@ class Panel {
 
     gui.domElement.classList.add("myPanel");
     panelContainer.appendChild(gui.domElement);
+  }
+
+  onReset() {
+    this.reset = false
+    window.dispatchEvent(new CustomEvent("reset"));
   }
 
   actualizeTime() {
@@ -214,8 +222,8 @@ class OutputPanel {
   //    gui.add(kite, "co2EmissionsWithKite").name("CO2 Emissions with Kite (kg)").listen(); // kg
       gui.add(kite, "co2Savings").name("CO2 Savings (kg)").listen(); // kg
 
-
-      gui.add(kite, "kiteEfficiency").name("Kite Efficiency (%)").listen(); // %
+      gui.add(kite, "currentKiteEfficiency").name("Current kite Efficiency(%)").listen(); // %
+      gui.add(kite, "kiteEfficiencyOverall").name("Kite Efficiency overall(%)").listen(); // %
 
       gui.add(panel, "windFileDate").name("Wind File Date").listen();
       gui.add(panel, "windFileTime").name("Wind File Time").listen();

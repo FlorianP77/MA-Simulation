@@ -216,7 +216,7 @@ class Ship {
     this.level = dataPoint[0][2];
 
 
-    this.shipDirection = dataPoint[2] / 180 * Math.PI;
+    this.shipDirection = dataPoint[2];
 
     if(kite.active){
       this.showKite()
