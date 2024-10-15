@@ -199,7 +199,7 @@ const defaultLayerOptions = {
 const windFileDates = [
   "20240616",
 
-
+/*
   "20240101",
   "20240102",
   "20240103",
@@ -231,13 +231,15 @@ const windFileDates = [
   "20240129",
   "20240130",
   "20240131",
+*/
 ];
 
 const windFileTimes = [
   "0000", 
   "0600", 
-  "1200",
+  /*"1200",
   "1800"
+  */
 ]
 
 const forecastHours = [

@@ -22,7 +22,7 @@ class Panel {
     this.speedFactor = defaultParticleSystemOptions.speedFactor;
     this.lineWidth = defaultParticleSystemOptions.lineWidth;
 
-    this.WMS_URL = "https://www.ncei.noaa.gov/thredds/wms/model-gfs-g4-anl-files/" + this.windFileDate.slice(0, 6) + "/" + this.windFileDate + "/gfs_4_" + this.windFileDate + "_" + this.windFileTime + "_" + this.forecastHours + ".grb2";
+    this.wMS_URL = "https://www.ncei.noaa.gov/thredds/wms/model-gfs-g4-anl-files/" + this.windFileDate.slice(0, 6) + "/" + this.windFileDate + "/gfs_4_" + this.windFileDate + "_" + this.windFileTime + "_" + this.forecastHours + ".grb2";
 
     this.globeLayer = globeLayers[defaultLayerOptions.globeLayer];
     this.layerToShow = layerNames[defaultLayerOptions.globeLayer];
@@ -99,8 +99,8 @@ class Panel {
 
   onTimeOptionsChange() {
     if (windFileDates.includes(this.windFileDate) && windFileTimes.includes(this.windFileTime) && forecastHours.includes(this.forecastHours)) {
-      this.WMS_URL = "https://www.ncei.noaa.gov/thredds/wms/model-gfs-g4-anl-files/" + this.windFileDate.slice(0, 4) + "/" + this.windFileDate + "/gfs_4_" + this.windFileDate + "_" + this.windFileTime + "_" + this.forecastHours + ".grb2"; wind3D.dataFile = this.windFileDate + "_" + this.windFileTime + "_" + this.forecastHours + ".json";
-      console.log(this.WMS_URL);
+      this.wMS_URL = "https://www.ncei.noaa.gov/thredds/wms/model-gfs-g4-anl-files/" + this.windFileDate.slice(0, 4) + "/" + this.windFileDate + "/gfs_4_" + this.windFileDate + "_" + this.windFileTime + "_" + this.forecastHours + ".grb2"; wind3D.dataFile = this.windFileDate + "_" + this.windFileTime + "_" + this.forecastHours + ".json";
+      console.log(this.wMS_URL);
 
       window.dispatchEvent(new CustomEvent("timeOptionsChanged"));
     } 

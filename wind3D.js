@@ -124,6 +124,7 @@ class Wind3D {
     }
 
     setGlobeLayer(userInput) {
+        const that = this;
         this.viewer.imageryLayers.removeAll();
         this.viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider();
 
@@ -139,10 +140,10 @@ class Wind3D {
             }
             case "WMS": {
                 this.viewer.imageryLayers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
-                    url: userInput.WMS_URL,
-                    layers: globeLayer.layer,
+                    url: that.panel.wMS_URL,
+                    layers: that.panel.globeLayer.layer,
                     parameters: {
-                        ColorScaleRange: globeLayer.ColorScaleRange
+                        ColorScaleRange: that.panel.globeLayer.ColorScaleRange
                     }
                 }));
                 break;
