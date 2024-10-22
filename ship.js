@@ -15,7 +15,6 @@ class Ship {
 
 
     this.shipSpeed = panel.shipSpeed
-    this.shipSpeedKnots = panel.shipSpeedKnots
     this.shipDirection = 0
 
     this.previousDataPointIndex = 0;
@@ -25,10 +24,6 @@ class Ship {
 
 
     this.active = true;
-    this.shipType = panel.shipType;
-
-    this.shipSpeed = panel.shipSpeed
-    this.shipSpeedKnots = panel.shipSpeedKnots
 
 
     this.route = routes[panel.route];
@@ -41,6 +36,7 @@ class Ship {
 
 
     this.kiteEntity = null
+    this.shipEntity = null
 
     this.pathPositions = [];
 
@@ -54,10 +50,8 @@ class Ship {
 
   initialize() {
     this.active = true;
-    this.shipType = panel.shipType;
 
     this.shipSpeed = panel.shipSpeed
-    this.shipSpeedKnots = panel.shipSpeedKnots
 
 
     this.route = routes[panel.route];
@@ -71,7 +65,7 @@ class Ship {
 
 
 
-    this.kiteEntity = null
+    
 
     this.pathPositions = [];
 
@@ -80,7 +74,6 @@ class Ship {
 
 
     this.start = Cesium.JulianDate.fromIso8601(panel.date);
-    console.log(this.route.length)
     this.end = Cesium.JulianDate.addSeconds(Cesium.JulianDate.fromIso8601(panel.date),this.route[this.route.length - 1][1] / this.shipSpeed,new Cesium.JulianDate());
 
     wind3D.viewer.clock.startTime = this.start.clone();
@@ -97,7 +90,6 @@ class Ship {
 
     this.load3dModel();
 
-    
     kite.initialize();
   }
 
@@ -164,12 +156,12 @@ class Ship {
       } 
       
       else {
-        console.log(this.route.length)
         wind3D.viewer.clock.currentTime = this.end
         this.previousDataPointIndex = this.route.length - 2;
         this.nextDataPointIndex = this.route.length - 1;
         console.log("Ship has arrived.");
         this.updatePositionData(this.route[this.nextDataPointIndex]);
+        kite.calculateOutput()
       }
 
       return;
@@ -232,21 +224,6 @@ class Ship {
 
   loadRoute() {
 
-    /*if (this.routeEntity) {
-      wind3D.viewer.dataSources.remove(this.routeEntity)
-      this.routeEntity = null;
-    }
-    console.log(this.routeUrl)
-
-    this.routeEntity = wind3D.viewer.dataSources.add({
-      this.routeEntity = wind3D.viewer.dataSources.add({
-        stroke: Cesium.Color.HOTPINK,
-        fill: Cesium.Color.PINK,
-        strokeWidth: 1,
-        zIndex: 1
-      });
-    });*/
-
     if (this.routeEntity) {
       wind3D.viewer.entities.remove(this.routeEntity)
       this.routeEntity = null;
@@ -257,22 +234,11 @@ class Ship {
         positions: this.pathPositions,
         width: 2,
         material: Cesium.Color.HOTPINK,
-        /*material: new Cesium.PolylineDashMaterialProperty({
-          color: Cesium.Color.PINK,
-          dashLength: 16, 
-          gapColor: Cesium.Color.TRANSPARENT ,
-          dashPattern: 0b111111110
-        }),*/
       }
     })
   }
 
   load3dModel() {
-    if (this.shipEntity) {
-      wind3D.viewer.entities.remove(this.shipEntity);
-      this.shipEntity = null;
-    }
-
     this.shipEntity = wind3D.viewer.entities.add({
       position: this.positionProperty,
 
@@ -308,7 +274,7 @@ class Ship {
   }
 
   removeKite() {
-    if(this.kiteEntity) {
+    if(this.kiteEntity != null) {
       wind3D.viewer.entities.remove(this.kiteEntity)
       this.kiteEntity = null;
     }
@@ -316,6 +282,18 @@ class Ship {
 
 
   reset() {
+
+    if(this.kiteEntity != null) {
+      wind3D.viewer.entities.remove(this.kiteEntity)
+      this.kiteEntity = null;
+    }
+
+    if (this.shipEntity != null) {
+      wind3D.viewer.entities.remove(this.shipEntity);
+      this.shipEntity = null;
+    }
+
+
 
 
     this.initialize();

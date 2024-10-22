@@ -1,10 +1,8 @@
 var DataProcess = (function () {
     var data;
 
-    //var loadData = async function (){
     var loadData = async function(filePath){
         data = {};
-        //var rawdata = await processFileFromUrl(fileUrl)
 
     
         var rawdata = await fetch(filePath).then(r=>r.json());

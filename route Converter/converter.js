@@ -6,7 +6,7 @@ fetch("routes/losangelesshanghai.geojson")
     return response.json();
   })
   .then((data) => {
-    console.log(extractCoordinates(data)); // Funktion aufrufen mit geladenen Daten
+    console.log(extractCoordinates(data)); 
   })
   .catch((error) => {
     console.error(
@@ -29,10 +29,10 @@ function extractCoordinates(data) {
     const properties = feature.properties;
 
     if (geometry.type === "MultiLineString") {
-      const coordinatesList = geometry.coordinates[0]; // Nehme die erste Linie
-      let currentTimestamp = properties.departure / 1000; // Unix-Zeit in s
+      const coordinatesList = geometry.coordinates[0];
+      let currentTimestamp = properties.departure / 1000; 
 
-      // Iteration über alle Koordinaten
+
       for (let i = 0; i < coordinatesList.length; i++) {
         const currentCoordinates = coordinatesList[i];
         let heading = 0;
@@ -43,15 +43,15 @@ function extractCoordinates(data) {
             currentCoordinates,
             nextCoordinates
           );
-          const timeToNext = distanceToNext / standardSpeed; // Zeit in s
-          currentTimestamp += timeToNext; // Update des Timestamps
-          heading = calculateHeading(currentCoordinates, nextCoordinates); // Kursberechnung
+          const timeToNext = distanceToNext / standardSpeed;
+          currentTimestamp += timeToNext;
+          heading = calculateHeading(currentCoordinates, nextCoordinates);
         }
 
         extractedData.push([
-          [...currentCoordinates, 0], // Koordinaten
-          currentTimestamp, // Unix-Timestamp in ms
-          heading, // Kurs in Grad
+          [...currentCoordinates, 0],
+          currentTimestamp,
+          heading,
         ]);
       }
       console.log(coordinatesList[coordinatesList.length - 2])
@@ -62,9 +62,9 @@ function extractCoordinates(data) {
   return JSON.stringify(extractedData);
 }
 
-// Funktion zur Berechnung der Haversine-Distanz
+
 function haversineDistance(coords1, coords2) {
-  const R = 6371e3; // Erdradius in Metern
+  const R = 6371e3;
   const lat1 = (coords1[1] * Math.PI) / 180;
   const lat2 = (coords2[1] * Math.PI) / 180;
   const deltaLat = ((coords2[1] - coords1[1]) * Math.PI) / 180;
@@ -78,10 +78,10 @@ function haversineDistance(coords1, coords2) {
       Math.sin(deltaLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  return R * c; // Distanz in Metern
+  return R * c; 
 }
 
-// Funktion zur Berechnung des Winkels/Kurses zwischen zwei Koordinaten
+
 function calculateHeading(coord1, coord2) {
   const lat1 = (coord1[1] * Math.PI) / 180;
   const lat2 = (coord2[1] * Math.PI) / 180;
@@ -93,5 +93,5 @@ function calculateHeading(coord1, coord2) {
     Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
 
   const initialBearing = Math.atan2(x, y);
-  return ((initialBearing * 180) / Math.PI + 360) % 360; // Kurs in Grad
+  return ((initialBearing * 180) / Math.PI + 360) % 360;
 }

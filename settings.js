@@ -32,14 +32,10 @@ const shipOptions = {
 
   //https://de.statista.com/statistik/daten/studie/1461265/umfrage/energiedichte-verschiedener-schiffskraftstoffe/
 
-  //(Energiedichte von Schweröl: 38.2 mj/l = 38'200'000 j/l
-
-  //Dichte Schweröl: 0,99g/cm^3 = 0,99 kg/l
-
-  //energy density = 38'200'000 j/l  /  0,99 kg/l  = 38’585’858.585858585858585858585859)
+ 
 
   //https://www.bundestag.de/resource/blob/876928/1c1929bbc1eaa0d85553ff4ed7e4f6eb/WD-8-093-21-pdf.pdf
-  // enegy density = 40'000 j/kg = 40'200'000 j/kg
+  // enegy density = 40'200 kj/kg = 40'200'000 j/kg
   //Dichte Schweröl MW: 965 kg/m^3
   fuelEnergyDensity: 40200000, //in J/kg
 
@@ -47,13 +43,12 @@ const shipOptions = {
   //Co2 / Fuel = 3,114
   co2PerFuel: 3.114, // koeffizient
 
-  //noch machen
   //https://www.wartsila.com/sustainability/climate-and-environment/innovating-for-sustainability/improving-efficiency
   motorEfficiency: 0.5,
 
   startTime: "2024-06-16T00:00:00Z",
 
-  clockMultiplier: 1,
+  clockMultiplier: 15000,//0,
   checkInterval: 500,
   shipLevel: 1,
 };
@@ -247,21 +242,47 @@ const forecastHours = [
 ]
 
 
+/*
+        Asien-Europa-Route:
+        Shanghai, China (122.056762, 30.616986)
+        Rotterdam, Niederlande (4.080639, 51.982069)
+
+        Transpazifische Route:
+        Shanghai, China (122.056762, 30.616986)
+        Los Angeles, USA (-118.248328, 33.709820)
+
+        Transatlantische Route:
+        Rotterdam, Niederlande (4.080639, 51.982069)
+        New York, USA (-74.042676, 40.602249)
+
+        Indien-Europa-Route:
+        Mumbai, Indien (72.926917, 18.941615)
+        Rotterdam, Niederlande (4.080639, 51.982069)
+
+        Südamerikanische Route:
+        Santos, Brasilien (-46.306774, -23.992960)
+        Rotterdam, Niederlande (4.080639, 51.982069)
+
+        https://worldoceanreview.com/de/wor-1/transport/der-weltseeverkehr/
+        https://geohilfe.de/welthandel-seeweg-visualisiert/
+*/
+
+
+
+
 
 
 document.addEventListener('keydown', function(event) {
   if (event.key === 'r') {
-    location.reload(); // Seite neu laden
+    location.reload(); 
   }
 });
 
 document.addEventListener('keydown', function(event) {
   if (event.key === 'v') {
     if (!document.fullscreenElement) {
-      // Seite in den Vollbildmodus schalten
       document.documentElement.requestFullscreen();
     } else {
-      // Vollbildmodus beenden
       document.exitFullscreen();
     }
   }

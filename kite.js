@@ -10,6 +10,8 @@ class Kite{
 
 
         this.deltaUpdateTime = 0;
+        this.deltaTime = 0;
+
         
 
         this.kiteSize = kiteOptions.defaultKiteSize
@@ -18,7 +20,7 @@ class Kite{
         this.gZ = kiteOptions.gZ
         
 
-        this.gamma = Math.atan(1 / this.gZ) * 180 / Math.PI;//ARCTAN(1/this.gZ)*180/PI()
+        this.gamma = Math.atan(1 / this.gZ) * 180 / Math.PI;
 
         this.windowAngleLoop = (90 - this.gamma) / 10 * kiteOptions.windWindowPositionLoop
         this.windowAngleSinus = (90 - this.gamma) / 10 * kiteOptions.windWindowPositionSinus
@@ -62,13 +64,14 @@ class Kite{
         this.co2Savings = 0;
 
         this.currentKiteEfficiency = 0;
-        this.kiteEfficiencyOverall = 0;
+        this.overallKiteEfficiency = 0;
 
         this.kiteFormula = "formula";
         this.motorFormula = "formula";
 
         this.co2PerFuel = shipOptions.co2PerFuel
         
+        this.fuelConsumptionInKgPerSecond = 0;
     }
 
 
@@ -90,6 +93,10 @@ class Kite{
         this.co2EmissionsWithoutKite = 0;
         this.co2EmissionsWithKite = 0;
         this.co2Savings = 0;
+
+        this.previousTime = wind3D.viewer.clock.startTime
+
+        this.fuelConsumptionInKgPerSecond = (panel.shipType.fuelConsumption[shipSpeeds.indexOf(panel.shipSpeedKnots)] / 86400) * 1000;
     }
 
 
@@ -131,17 +138,17 @@ class Kite{
     }
 
 
-    getWindData(lon, lat, lev) {
+    getWindData(windData, lon, lat, lev) {
         
-        let lonCoordinateIndex = this.findNearestCoordinateIndex(this.windData.lon.array, lon);
-        let latCoordinateIndex = this.findNearestCoordinateIndex(this.windData.lat.array, lat);
-        let levCoordinateIndex = this.findNearestCoordinateIndex(this.windData.lev.array, lev);
+        let lonCoordinateIndex = this.findNearestCoordinateIndex(windData.lon.array, lon);
+        let latCoordinateIndex = this.findNearestCoordinateIndex(windData.lat.array, lat);
+        let levCoordinateIndex = this.findNearestCoordinateIndex(windData.lev.array, lev);
 
 
         let windIndex = (lonCoordinateIndex) + (720 * (latCoordinateIndex));
 
-        this.u = this.windData.U.array[windIndex];
-        this.v = this.windData.V.array[windIndex];
+        this.u = windData.U.array[windIndex];
+        this.v = windData.V.array[windIndex];
   
 
 
@@ -149,9 +156,8 @@ class Kite{
 
     
     calculateOutput(){
-        this.deltaUpdateTime = (ship.dataPoint[1] / ship.shipSpeed) - this.timestampLastUpdate
 
-        this.getWindData(ship.longitude, ship.latitude, ship.level)
+        this.getWindData(wind3D.windData, ship.longitude, ship.latitude, ship.level)
 
         this.windSpeed = Math.sqrt(this.u ** 2 + this.v ** 2);
 
@@ -179,16 +185,12 @@ class Kite{
         }
         
 
-
-        console.log("differenceDirection:", this.differenceDirection, "shipWinddirection:", this.shipWindDirection)
-
-
         
 
         if (this.shipWindDirection > (90 + 53)  && this.shipWindSpeed != 0){
             
             this.active = true
-            this.flymode = "looping"
+            this.flymode = "figure-eight flight curve"
 
 
             
@@ -202,7 +204,7 @@ class Kite{
         else if ((this.shipWindDirection + this.windowAngleSinus) > 90 && this.shipWindSpeed != 0){
             
             this.active = true
-            this.flymode = "sinus"
+            this.flymode = "sine wave flight path"
 
 
             let flowVelocity = (this.shipWindSpeed * Math.sin((90 - this.windowAngleSinus) * Math.PI / 180)) / Math.sin(this.gamma * Math.PI / 180);
@@ -215,22 +217,24 @@ class Kite{
 
         else{
             this.active = false
-            this.flymode = "nothing"
+            this.flymode = "not flying"
             this.kiteForce = 0
         }
+        
 
         
-        
-        
-        // P = (Treibstoffverbrauch * Energiedichte * Wirkungsgrad)
-        // F = P / Geschwindigkeit des Schiffs
-        let fuelConsumptionInKgPerSecond = (ship.shipType.fuelConsumption[shipSpeeds.indexOf(ship.shipSpeedKnots)] / 86400) * 1000;
 
-        this.motorForceWithoutKite = (fuelConsumptionInKgPerSecond * this.fuelEnergyDensity * this.motorEfficiency) / ship.shipSpeed; 
+        this.motorForceWithoutKite = (this.fuelConsumptionInKgPerSecond * this.fuelEnergyDensity * this.motorEfficiency) / ship.shipSpeed; 
 
-        this.motorForceWithKite = ((this.motorForceWithoutKite - this.kiteForce) < 0)
-        ? 0
-        : this.motorForceWithoutKite - this.kiteForce
+
+        if ((this.motorForceWithoutKite - this.kiteForce) > 0){
+            this.motorForceWithKite = this.motorForceWithoutKite - this.kiteForce
+        }
+
+        else {
+            this.motorForceWithKite = 0
+            this.kiteForce = this.motorForceWithoutKite
+        }
 
         
         this.currentKiteEfficiency = (this.kiteForce === 0) 
@@ -239,18 +243,17 @@ class Kite{
 
 
         
+        this.deltaUpdateTime = Cesium.JulianDate.secondsDifference(wind3D.viewer.clock.currentTime, this.previousTime)
+        this.previousTime = Cesium.JulianDate.clone(wind3D.viewer.clock.currentTime)
+        this.deltaTime = Cesium.JulianDate.secondsDifference(wind3D.viewer.clock.currentTime, wind3D.viewer.clock.startTime)
+
     
 
-        this.fuelConsumptionWithoutKite += fuelConsumptionInKgPerSecond * this.deltaUpdateTime;
+        this.fuelConsumptionWithoutKite = this.fuelConsumptionInKgPerSecond * this.deltaTime;
 
-        this.fuelConsumptionWithKite += fuelConsumptionInKgPerSecond * (this.motorForceWithKite / this.motorForceWithoutKite) * this.deltaUpdateTime
+        this.fuelSavings += ((this.kiteForce * ship.shipSpeed) / (this.fuelEnergyDensity * this.motorEfficiency)) * this.deltaUpdateTime
 
-        this.fuelSavings = this.fuelConsumptionWithoutKite - this.fuelConsumptionWithKite
-
-        
-        this.kiteEfficiencyOverall = (this.fuelConsumptionWithoutKite === 0) 
-        ? 0 
-        : 100 - ((this.fuelConsumptionWithKite / this.fuelConsumptionWithoutKite) * 100);
+        this.fuelConsumptionWithKite = this.fuelConsumptionWithoutKite - this.fuelSavings
 
 
 
@@ -259,55 +262,12 @@ class Kite{
         this.co2Savings = this.fuelSavings * this.co2PerFuel
 
         this.co2EmissionsWithKite = this.fuelConsumptionWithKite * this.co2PerFuel
+        
+                
+        this.overallKiteEfficiency = (this.co2EmissionsWithoutKite === 0) 
+        ? 0 
+        : 100 - ((this.co2EmissionsWithKite / this.co2EmissionsWithoutKite) * 100);
 
-        this.timestampLastUpdate = ship.dataPoint[1] / ship.shipSpeed
-
-        
-        
-        
-        
-        
-        
-        /*
-        Ein Kite kann effektiv genutzt werden, wenn der Wind aus einem Winkel von etwa 45° bis 135° relativ zur Fahrtrichtung des Schiffes kommt.
-        https://www.oceanergy.com/technology-kite-propulsion-systems-ships/
-        https://www.cargo-partner.com/de/trendletter/issue-10/segel-und-kites-unterstuetzen-frachtschiffe
-        */
-        
-        
-        
-        
-        
-        
-        
-
-        /*
-        Asien-Europa-Route:
-        Shanghai, China (122.056762, 30.616986)
-        Rotterdam, Niederlande (4.080639, 51.982069)
-
-        Transpazifische Route:
-        Shanghai, China (122.056762, 30.616986)
-        Los Angeles, USA (-118.248328, 33.709820)
-
-        Transatlantische Route:
-        Rotterdam, Niederlande (4.080639, 51.982069)
-        New York, USA (-74.042676, 40.602249)
-
-        Indien-Europa-Route:
-        Mumbai, Indien (72.926917, 18.941615)
-        Rotterdam, Niederlande (4.080639, 51.982069)
-
-        Südamerikanische Route:
-        Santos, Brasilien (-46.306774, -23.992960)
-        Rotterdam, Niederlande (4.080639, 51.982069)
-
-        https://worldoceanreview.com/de/wor-1/transport/der-weltseeverkehr/
-        https://geohilfe.de/welthandel-seeweg-visualisiert/
-        */
-
-
-        
         
     }
         

@@ -23,6 +23,8 @@ class Wind3D {
         this.scene = this.viewer.scene;
         this.camera = this.viewer.camera;
 
+        this.active = false
+
         this.panel = panel;
 
         this.dataFile = panel.windFileDate + '_' + panel.windFileTime + '_' + panel.forecastHours + '.json'
@@ -58,7 +60,8 @@ class Wind3D {
                 this.updateViewerParameters();
                 this.particleSystem = new ParticleSystem(this.scene.context, data, this.panel.getUserInput(), this.viewerParameters);
                 this.addPrimitives();
-                kite.windData = data
+                this.windData = data
+                this.active = true
             }
         );
     }
@@ -196,6 +199,7 @@ class Wind3D {
             that.setGlobeLayer(that.panel.getUserInput());
         });
         window.addEventListener('timeOptionsChanged', function () {
+            that.active = false
 
             that.clearParticleSystem();
             that.initializeData();

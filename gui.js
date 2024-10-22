@@ -44,16 +44,16 @@ class Panel {
 
   initGUI(layerNames, shipTypeNames) {
     const gui = new dat.GUI({ autoPlace: false });
-    gui.add(this, "maxParticles", 1, 256 * 256, 1).name("Max Particles").onFinishChange(this.onParticleSystemOptionsChange.bind(this));
-    gui.add(this, "particleHeight", 1, 10000, 1).name("Particle Height").onFinishChange(this.onParticleSystemOptionsChange.bind(this));
-    gui.add(this, "fadeOpacity", 0.9, 0.999, 0.001).name("Fade Opacity").onFinishChange(this.onParticleSystemOptionsChange.bind(this));
-    gui.add(this, "dropRate", 0.0, 0.1).name("Drop Rate").onFinishChange(this.onParticleSystemOptionsChange.bind(this));
-    gui.add(this, "dropRateBump", 0, 0.2).name("Drop Rate Bump").onFinishChange(this.onParticleSystemOptionsChange.bind(this));
-    gui.add(this, "speedFactor", 1, 10).name("Speed Factor").onFinishChange(this.onParticleSystemOptionsChange.bind(this));
-    gui.add(this, "lineWidth", 1, 10).name("Line Width").onFinishChange(this.onParticleSystemOptionsChange.bind(this));
+    //gui.add(this, "maxParticles", 1, 256 * 256, 1).name("Max Particles").onFinishChange(this.onParticleSystemOptionsChange.bind(this));
+    //gui.add(this, "particleHeight", 1, 10000, 1).name("Particle Height").onFinishChange(this.onParticleSystemOptionsChange.bind(this));
+    //gui.add(this, "fadeOpacity", 0.9, 0.999, 0.001).name("Fade Opacity").onFinishChange(this.onParticleSystemOptionsChange.bind(this));
+    //gui.add(this, "dropRate", 0.0, 0.1).name("Drop Rate").onFinishChange(this.onParticleSystemOptionsChange.bind(this));
+    //gui.add(this, "dropRateBump", 0, 0.2).name("Drop Rate Bump").onFinishChange(this.onParticleSystemOptionsChange.bind(this));
+    //gui.add(this, "speedFactor", 1, 10).name("Speed Factor").onFinishChange(this.onParticleSystemOptionsChange.bind(this));
+    //gui.add(this, "lineWidth", 1, 10).name("Line Width").onFinishChange(this.onParticleSystemOptionsChange.bind(this));
     gui.add(this, "layerToShow", layerNames).name("Layer to Show").onFinishChange(this.onLayerOptionsChange.bind(this));
     gui.add(this, "date").name("Date").onFinishChange(this.actualizeTime.bind(this));
-//    gui.add(this, "forecastHours").name("Forecast Hours").onFinishChange(this.actualizeTime.bind(this));
+    //gui.add(this, "forecastHours").name("Forecast Hours").onFinishChange(this.actualizeTime.bind(this));
     gui.add(this, "startingPoint", ports).name("Starting Point").onFinishChange(this.onRouteOptionsChange.bind(this));
     gui.add(this, "destination", ports).name("Destination").onFinishChange(this.onRouteOptionsChange.bind(this));
     gui.add(this, "panelShipTypeName", shipTypeNames).name("Ship Type").onFinishChange(this.onShipOptionsChange.bind(this));
@@ -184,33 +184,38 @@ class Panel {
 class OutputPanel {
     constructor() {
 
-        wind3D.viewer = wind3D.viewer;
+      document.addEventListener('DOMContentLoaded', () => {
+          this.initGUI();
+      });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            this.initGUI();
-        });
-
-        this.update()
+      this.update()
     }
 
 
     initGUI() {
       const gui = new dat.GUI({ autoPlace: false, width: 400 });
 
+      gui.add(kite, "overallKiteEfficiency").name("Overall Kite Efficiency (%)").listen(); // %
+      gui.add(kite, "currentKiteEfficiency").name("Current kite Efficiency(%)").listen(); // %
+
       gui.add(kite, "windDirection").name("Wind Direction (deg)").listen(); // degrees
       gui.add(ship, "shipDirection").name("Ship Direction (deg)").listen(); // degrees
-      gui.add(kite, "differenceDirection").name("Angular difference (deg)").listen(); // degrees
+      //gui.add(kite, "differenceDirection").name("Angular difference (deg)").listen(); // degrees
 
       gui.add(kite, "windSpeed").name("Wind Speed (m/s)").listen(); // m/s
       gui.add(ship, "shipSpeed").name("Ship Speed (m/s)").listen(); // m/s
-      gui.add(kite, "shipWindSpeed").name("Wind Speed on the ship (m/s)").listen(); // m/s
+      //gui.add(kite, "shipWindSpeed").name("Wind Speed on the ship (m/s)").listen(); // m/s
+      //gui.add(kite, "shipWindDirection").name("Wind Direction on the ship (m/s)").listen(); // m/s
 
       gui.add(kite, "motorForceWithoutKite").name("Motor Force without Kite (N)").listen(); // N
       gui.add(kite, "motorForceWithKite").name("Motor Force with Kite (N)").listen(); // N
       gui.add(kite, "kiteForce").name("Kite Force (N)").listen(); // N
- //     gui.add(kite, "kiteFormula").name("Kite Formula").listen();
- //     gui.add(kite, "motorFormula").name("Motor Formula").listen();
-      gui.add(kite, "active").name("is Kite active?").listen(); // boolean
+
+
+      //gui.add(kite, "kiteFormula").name("Kite Formula").listen();
+      //gui.add(kite, "motorFormula").name("Motor Formula").listen();
+      
+      //gui.add(kite, "active").name("is Kite active?").listen(); // boolean
       gui.add(kite, "flymode").name("Flymode").listen(); 
       
       gui.add(kite, "fuelConsumptionWithoutKite").name("Consumption without Kite (kg)").listen(); // kg
@@ -218,12 +223,9 @@ class OutputPanel {
       gui.add(kite, "fuelSavings").name("Fuel Savings (kg)").listen(); // kg
 
 
-  //    gui.add(kite, "co2EmissionsWithoutKite").name("CO2 Emissions without Kite (kg)").listen(); // kg
-  //    gui.add(kite, "co2EmissionsWithKite").name("CO2 Emissions with Kite (kg)").listen(); // kg
+      //gui.add(kite, "co2EmissionsWithoutKite").name("CO2 Emissions without Kite (kg)").listen(); // kg
+      //gui.add(kite, "co2EmissionsWithKite").name("CO2 Emissions with Kite (kg)").listen(); // kg
       gui.add(kite, "co2Savings").name("CO2 Savings (kg)").listen(); // kg
-
-      gui.add(kite, "currentKiteEfficiency").name("Current kite Efficiency(%)").listen(); // %
-      gui.add(kite, "kiteEfficiencyOverall").name("Kite Efficiency overall(%)").listen(); // %
 
       gui.add(panel, "windFileDate").name("Wind File Date").listen();
       gui.add(panel, "windFileTime").name("Wind File Time").listen();
@@ -236,23 +238,24 @@ class OutputPanel {
 
 
     update() {
-
+      
+      //setInterval(() => {
+      wind3D.viewer.clock.onTick.addEventListener(() => {
         
-        //wind3D.viewer.clock.onTick.addEventListener(() => {
-        setInterval(() => {
-            if (ship.active){
-                ship.updateDatapoint()
+        if (ship.active && wind3D.active){
+            ship.updateDatapoint()
 
-                kite.calculateOutput()
-            }
+            kite.calculateOutput()
+        }
 
 
 
-            if (panel.checkWindFile(Cesium.JulianDate.toIso8601(wind3D.viewer.clock.currentTime))) {
-              panel.onTimeOptionsChange();
-            };
-        }, shipOptions.checkInterval)
-        //});
+        if (panel.checkWindFile(Cesium.JulianDate.toIso8601(wind3D.viewer.clock.currentTime))) {
+          panel.onTimeOptionsChange();
+        };
+        
+      });
+      //}, shipOptions.checkInterval * wind3D.viewer.clock.multiplier)
 
     }
 }
