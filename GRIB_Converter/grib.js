@@ -35,6 +35,7 @@ async function processFileFromUrl(url, filePath) {
   writeFileSync(filePath, JSON.stringify(data));
 }
 
+
 (async () => {
   // Loop through each day in January
   for (let day = 1; day <= 31; day++) {
@@ -64,3 +65,4 @@ async function processFileFromUrl(url, filePath) {
     }
   }
 })();
+

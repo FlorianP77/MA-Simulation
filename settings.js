@@ -46,9 +46,9 @@ const shipOptions = {
   //https://www.wartsila.com/sustainability/climate-and-environment/innovating-for-sustainability/improving-efficiency
   motorEfficiency: 0.5,
 
-  startTime: "2024-06-16T00:00:00Z",
+  startTime: "2024-01-01T00:00:00Z",
 
-  clockMultiplier: 15000,//0,
+  clockMultiplier: 10000,
   checkInterval: 500,
   shipLevel: 1,
 };
@@ -117,8 +117,6 @@ const shipTypeNames = shipTypes.map((shiptype) => shiptype.name);
 
 
 const defaultTimeOptions = {
-  forecastHours: "003",
-
   windUpdateStep: 6, //in hours, min: 6, max:24
 };
 
@@ -151,7 +149,6 @@ const routes = {
 
 const fileOptions = {
   dataDirectory: "dataSets/",
-  dataFile: defaultTimeOptions.date + "_" + defaultTimeOptions.time + "_" + defaultTimeOptions.timeStep + ".json",
   glslDirectory: "glsl/",
   shipDirectory: "models/ship.glb",
   kiteDirectory: "models/kite.glb",
@@ -192,9 +189,6 @@ const defaultLayerOptions = {
 };
 
 const windFileDates = [
-  "20240616",
-
-/*
   "20240101",
   "20240102",
   "20240103",
@@ -226,20 +220,17 @@ const windFileDates = [
   "20240129",
   "20240130",
   "20240131",
-*/
 ];
 
 const windFileTimes = [
   "0000", 
   "0600", 
-  /*"1200",
+  "1200",
   "1800"
-  */
+  
 ]
 
-const forecastHours = [
-  "003"
-]
+const forecastHours = "006"
 
 
 /*

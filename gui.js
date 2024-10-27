@@ -6,7 +6,8 @@ class Panel {
     this.route = this.startingPoint + this.destination;
 
     this.date = shipOptions.startTime;
-    this.forecastHours = defaultTimeOptions.forecastHours;
+    this.forecastHours = forecastHours;
+    this.windFileTimes = windFileTimes
 
 
     this.windUpdateStep = defaultTimeOptions.windUpdateStep;
@@ -98,9 +99,9 @@ class Panel {
   }
 
   onTimeOptionsChange() {
-    if (windFileDates.includes(this.windFileDate) && windFileTimes.includes(this.windFileTime) && forecastHours.includes(this.forecastHours)) {
+    
+    if (windFileDates.includes(this.windFileDate) && this.windFileTimes.includes(this.windFileTime) && forecastHours === this.forecastHours) {
       this.wMS_URL = "https://www.ncei.noaa.gov/thredds/wms/model-gfs-g4-anl-files/" + this.windFileDate.slice(0, 4) + "/" + this.windFileDate + "/gfs_4_" + this.windFileDate + "_" + this.windFileTime + "_" + this.forecastHours + ".grb2"; wind3D.dataFile = this.windFileDate + "_" + this.windFileTime + "_" + this.forecastHours + ".json";
-      console.log(this.wMS_URL);
 
       window.dispatchEvent(new CustomEvent("timeOptionsChanged"));
     } 
@@ -127,7 +128,6 @@ class Panel {
 
     const panelShipType = shipTypes.find((ship) => ship.name === this.panelShipTypeName)
 
-    console.log(panelShipType.fuelConsumption.length)
     if (shipSpeeds.indexOf(this.panelShipSpeedKnots) <= panelShipType.fuelConsumption.length - 1) {
 
       this.shipType = panelShipType
@@ -142,14 +142,14 @@ class Panel {
   }
 
   checkWindFile(currentTime) {
-    if (parseInt(currentTime.slice(11, 13), 10) - parseInt(this.windFileTime.slice(0, 2), 10) >= this.windUpdateStep / 2 || currentTime.slice(0, 4) + currentTime.slice(5, 7) + currentTime.slice(8, 10) != this.windFileDate) {
+    if (parseInt(currentTime.slice(11, 13), 10) - parseInt(this.windFileTime.slice(0, 2), 10) >= this.windUpdateStep || currentTime.slice(0, 4) + currentTime.slice(5, 7) + currentTime.slice(8, 10) != this.windFileDate) {
       this.windFileDate = currentTime.slice(0, 4) + currentTime.slice(5, 7) + currentTime.slice(8, 10);
 
       const roundedHours = Math.round(parseInt(currentTime.slice(11, 13), 10) / this.windUpdateStep) * this.windUpdateStep;
 
       this.windFileTime = String(roundedHours).padStart(2, "0") + "00";
       return true;
-    } 
+    }
     
     else {
       return false;
@@ -173,7 +173,7 @@ class Panel {
       globeLayer: this.globeLayer,
       WMS_URL: this.WMS_URL,
       date: this.date,
-      timeStep: this.forecastHours,
+      forecastHours: this.forecastHours,
       startingPoint: this.startingPoint,
       destination: this.destination,
     };
